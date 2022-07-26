@@ -1,5 +1,6 @@
 package com.marriageTesting;
 
+import java.io.IOException;
 import java.text.ParseException;
 
 import org.openqa.selenium.support.PageFactory;
@@ -12,7 +13,7 @@ import com.marriage.pages.HomePageMarriage;
 public class MarriageTestCase extends BaseTest {
 	
 	@Test
-	public void clickongirl() throws ParseException {
+	public void clickongirl() throws ParseException, IOException {
 	HomePageMarriage home =	PageFactory.initElements(Keyword.driver, HomePageMarriage.class);
 		home.SelectLanguage();
 		home.Girls();
