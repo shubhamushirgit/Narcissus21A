@@ -1,6 +1,9 @@
 package com.marriage.pages;
 
 import java.awt.List;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,15 +13,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
+import org.bouncycastle.jcajce.provider.symmetric.Serpent.TECB;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
+import org.testng.reporters.Files;
 
 import com.Keywords.Util.PropUtil;
 import com.github.dockerjava.api.model.Driver;
@@ -80,9 +89,9 @@ public class HomePageMarriage {
 		by.selectByIndex(0);
 	}
 
-	public void getbirth() throws ParseException {
+	public void getbirth() throws ParseException, IOException {
 
-		for (int i = 1; i <= 100; i++) {
+		for (int i = 1; i <= 3; i++) {
 			if (i != 0) {
 				JavascriptExecutor scroll = (JavascriptExecutor) Keyword.driver;
 				scroll.executeScript("window.scrollBy(0,1500)");
@@ -91,7 +100,7 @@ public class HomePageMarriage {
 			WebElement data = Keyword.driver
 					.findElement(By.xpath("//div[@class=\"col-xs-12 col-md-6 profile-user user\"][" + i + "]"));
 
-			WebElement date = data.findElement(By.tagName("th[1]").tagName("td[1]"));
+			WebElement date = data.findElement(By.tagName("th").tagName("td"));
 
 			String bdate = date.getText();
 			SimpleDateFormat ftm = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
@@ -101,10 +110,23 @@ public class HomePageMarriage {
 			Date Todate = ftm.parse("01/01/1999");
 
 			if (ActualDate.compareTo(Fromdate) >= 0 & ActualDate.compareTo(Todate) <= 0) {
+				String profileID = Keyword.driver.findElement(By.xpath("//div[@data-type=\"Girls\"]/div[" + i + "]"))
+						.getText();
+				System.out.println(profileID + "***** Valied ***");
+				Keyword.driver.findElement(By.xpath("//a[contains(text(),\"View profile\")][" + i + "]")).click();
 
-				System.out.println(
-						Keyword.driver.findElement(By.xpath("//div[@data-type=\"Girls\"]/div[" + i + "]")).getText()
-								+ "***** Valied ***");
+				String parentwindo = Keyword.driver.getWindowHandle();
+				Set<String> chiledwindo = Keyword.driver.getWindowHandles();
+
+				for (String windo : chiledwindo) {
+					Keyword.driver.switchTo().window(windo);
+					TakesScreenshot ts = (TakesScreenshot) Keyword.driver;
+					File src = ts.getScreenshotAs(OutputType.FILE);
+					File dest = new File("C:/Users/Amol/Desktop/proflie/profileID.png");
+					FileUtils.copyFile(src, dest);
+
+					Keyword.driver.switchTo().window(parentwindo);
+				}
 
 			} else {
 
